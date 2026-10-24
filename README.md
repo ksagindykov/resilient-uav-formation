@@ -18,6 +18,7 @@ The repository reproduces every number, table and figure of the paper.
 | Attack-aware estimator | `src/ruav/estimator.py` | done |
 | Trust-weighted formation controller | `src/ruav/controller.py` | done |
 | Robust CBF safety filter | `src/ruav/cbf.py` | done |
+| Analysis constants, Lyapunov certificate (Section 4) | `src/ruav/analysis.py`, `scripts/compute_certificates.py` | done |
 | Baselines A–C | `src/ruav/baselines.py` | step 4 |
 | Monte Carlo campaign | `scripts/run_monte_carlo.py` | step 4 |
 | Figures and tables | `scripts/make_figures.py` | step 4 |
@@ -32,6 +33,7 @@ python -m unittest discover -s tests -v
 
 ## Reproducing the paper
 ```bash
+python scripts/compute_certificates.py                               # Table of analysis constants (Section 4)
 python scripts/run_scenario.py --config configs/hybrid_attack.yaml   # one run (step 4)
 python scripts/run_monte_carlo.py --config configs/monte_carlo.yaml  # full campaign (step 4)
 python scripts/make_figures.py                                       # tables and figures (step 4)

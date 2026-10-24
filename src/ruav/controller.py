@@ -15,20 +15,28 @@ class ControlParams:
     k_p: float = 1.0
     k_v: float = 1.8
     tau_up: float = 3.0     # trust ramp-up time after a link alarm clears, s
+    m_levels: int = 3       # trust takes values in {0, 1/M, ..., 1}  (finite mode set, Section 4)
 
 
 class TrustWeights:
-    """alpha_ij in [0, 1]: set to 0 on alarm, ramped back to 1 linearly over tau_up."""
-    def __init__(self, links: list, tau_up: float):
+    """alpha_ij in {0, 1/M, ..., 1}: set to 0 on alarm; after the alarm clears it is raised
+    by 1/M every tau_up/M seconds. The quantisation keeps the set of closed-loop modes finite,
+    which is what the average dwell-time analysis of Section 4 requires."""
+    def __init__(self, links: list, tau_up: float, m_levels: int = 3):
         self.alpha = {j: 1.0 for j in links}
-        self.tau_up = tau_up
+        self.timer = {j: 0.0 for j in links}
+        self.tau_up, self.m = tau_up, m_levels
 
     def update(self, link_alarm: dict, dt: float) -> dict:
+        hold = self.tau_up / self.m
         for j, alarm in link_alarm.items():
             if alarm:
-                self.alpha[j] = 0.0
-            else:
-                self.alpha[j] = min(1.0, self.alpha[j] + dt / self.tau_up)
+                self.alpha[j], self.timer[j] = 0.0, 0.0
+            elif self.alpha[j] < 1.0:
+                self.timer[j] += dt
+                if self.timer[j] >= hold - 1e-12:
+                    self.alpha[j] = min(1.0, round(self.alpha[j] * self.m + 1) / self.m)
+                    self.timer[j] = 0.0
         return dict(self.alpha)
 
 

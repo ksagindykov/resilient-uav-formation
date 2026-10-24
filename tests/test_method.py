@@ -71,3 +71,23 @@ class TestDetector(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTrustAndAnalysis(unittest.TestCase):
+    def test_trust_levels_are_quantised(self):
+        from ruav.controller import TrustWeights
+        tw = TrustWeights([1], tau_up=3.0, m_levels=3)
+        tw.update({1: True}, 0.02)
+        seen = set()
+        for _ in range(200):
+            seen.add(round(tw.update({1: False}, 0.02)[1], 9))
+        self.assertEqual(seen, {round(x, 9) for x in (0.0, 1/3, 2/3, 1.0)})
+
+    def test_benchmark_modes_hurwitz(self):
+        import yaml
+        from ruav import analysis
+        cfg = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "configs", "hybrid_attack.yaml")))
+        A = np.array(cfg["graph"]["adjacency"]); g = np.array(cfg["graph"]["pinning"])
+        res = analysis.adt_constants(A, g, f=1, m_levels=3)
+        self.assertTrue(res["all_hurwitz"])
+        self.assertGreater(res["mu"], 1.0)
