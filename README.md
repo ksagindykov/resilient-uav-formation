@@ -14,10 +14,10 @@ The repository reproduces every number, table and figure of the paper.
 | UAV double-integrator model | `src/ruav/dynamics.py` | done |
 | Interaction graph, robustness check (Assumption 1(iv)) | `src/ruav/graph.py` | done |
 | Time-staggered attack schedules | `src/ruav/attacks.py` | done |
-| Residual detector and channel isolation | `src/ruav/detector.py` | step 2 |
-| Attack-aware estimator | `src/ruav/estimator.py` | step 2 |
-| Trust-weighted formation controller | `src/ruav/controller.py` | step 2 |
-| Robust CBF safety filter | `src/ruav/cbf.py` | step 2 |
+| Residual detector and channel isolation | `src/ruav/detector.py` | done |
+| Attack-aware estimator | `src/ruav/estimator.py` | done |
+| Trust-weighted formation controller | `src/ruav/controller.py` | done |
+| Robust CBF safety filter | `src/ruav/cbf.py` | done |
 | Baselines A–C | `src/ruav/baselines.py` | step 4 |
 | Monte Carlo campaign | `scripts/run_monte_carlo.py` | step 4 |
 | Figures and tables | `scripts/make_figures.py` | step 4 |
