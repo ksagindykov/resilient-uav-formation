@@ -13,6 +13,7 @@ Only onboard relative measurements (rho, varrho) are used -- never the communica
 """
 from __future__ import annotations
 from dataclasses import dataclass
+import math
 import numpy as np
 
 
@@ -24,7 +25,8 @@ class CBFParams:
     a_u_bar: float = 1.0      # bound on actuation attack ||a_i^u||, m/s^2
     d_bar: float = 0.15       # bound on disturbance ||d_i||, m/s^2
     a0_bar: float = 0.2       # bound on leader acceleration, m/s^2
-    meas_margin: float = 0.0  # mu_ij, margin for relative-sensing errors (derived in Section 4)
+    meas_margin: float = 0.0  # mu_ij for follower pairs (Lemma 1, Eq. (mu))
+    meas_margin_leader: float = 0.0  # mu_i0 for the leader pair
     u_box: float = 4.0        # per-axis bound u_max/sqrt(3) used in the QP of Section 3.5, m/s^2
     sensing_radius: float = 6.0
 
@@ -36,9 +38,10 @@ def pair_constraint(rho: np.ndarray, varrho: np.ndarray, prm: CBFParams, with_le
     """
     q = -np.asarray(rho, float)          # p_i - p_j
     w = -np.asarray(varrho, float)       # v_i - v_j
-    nq = float(np.linalg.norm(q))
-    h = nq**2 - prm.d_safe**2
-    hd = 2.0 * q @ w
+    qq = float(q @ q)
+    nq = math.sqrt(qq)
+    h = qq - prm.d_safe**2
+    hd = 2.0 * float(q @ w)
     if with_leader:
         share = 1.0
         disturb = prm.a_u_bar + prm.d_bar + prm.a0_bar
@@ -46,7 +49,8 @@ def pair_constraint(rho: np.ndarray, varrho: np.ndarray, prm: CBFParams, with_le
         share = 0.5
         disturb = prm.a_u_bar + prm.d_bar
     # 2 q.u_i >= -share*(2||w||^2 + k1 hd + k0 h) + 2||q|| disturb + mu
-    rhs = -share * (2.0 * w @ w + prm.k1 * hd + prm.k0 * h) + 2.0 * nq * disturb + prm.meas_margin
+    mu = prm.meas_margin_leader if with_leader else prm.meas_margin
+    rhs = -share * (2.0 * float(w @ w) + prm.k1 * hd + prm.k0 * h) + 2.0 * nq * disturb + mu
     return -2.0 * q, -rhs                # -2q.u <= -rhs
 
 
@@ -88,7 +92,7 @@ def safety_filter(u_nom: np.ndarray, rel: dict, prm: CBFParams, leader_key=-1):
     """
     rows, rhs = [], []
     for j, (rho, varrho) in rel.items():
-        if np.linalg.norm(rho) > prm.sensing_radius:
+        if float(rho @ rho) > prm.sensing_radius ** 2:
             continue
         g, bb = pair_constraint(rho, varrho, prm, with_leader=(j == leader_key))
         rows.append(g)
@@ -98,6 +102,8 @@ def safety_filter(u_nom: np.ndarray, rel: dict, prm: CBFParams, leader_key=-1):
         rows += [e, -e]
         rhs += [prm.u_box, prm.u_box]
     G = np.array(rows); b = np.array(rhs)
+    if np.all(G @ u_nom <= b + 1e-12):          # nominal command already safe: QP inactive
+        return np.asarray(u_nom, float).copy(), {"active": 0, "violation": 0.0}
     u, viol = solve_qp(u_nom, G, b)
     n_active = int(np.sum(np.abs(G @ u - b) < 1e-6))
     return u, {"active": n_active, "violation": viol}

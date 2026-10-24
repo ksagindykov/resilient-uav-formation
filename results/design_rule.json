@@ -1,0 +1,14 @@
+{
+ "Rs8": {
+  "fdi_events": 63,
+  "fdi_detected": 63,
+  "fdi_detection_rate": 1.0,
+  "comm_peak_Emax_mean": 0.20086929137321305
+ },
+ "Rs6": {
+  "fdi_events": 63,
+  "fdi_detected": 32,
+  "fdi_detection_rate": 0.5079365079365079,
+  "comm_peak_Emax_mean": 0.562240813627813
+ }
+}

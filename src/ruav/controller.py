@@ -12,8 +12,8 @@ import numpy as np
 
 @dataclass
 class ControlParams:
-    k_p: float = 1.0
-    k_v: float = 1.8
+    k_p: float = 2.0
+    k_v: float = 3.0
     tau_up: float = 3.0     # trust ramp-up time after a link alarm clears, s
     m_levels: int = 3       # trust takes values in {0, 1/M, ..., 1}  (finite mode set, Section 4)
 

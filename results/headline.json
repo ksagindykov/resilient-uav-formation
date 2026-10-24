@@ -1,0 +1,44 @@
+{
+ "n_runs_per_cell": 50,
+ "n_total_runs": 1750,
+ "strongest_baseline": "B2_wmsr",
+ "peak_reduction_pct": 90.09363100942859,
+ "trec_reduction_pct": 99.39790668706402,
+ "proposed_peak": 0.28099972103183485,
+ "baseline_peak": 2.8365561720876933,
+ "proposed_trec": 0.010048022345607279,
+ "baseline_trec": 1.668848022345607,
+ "proposed_collisions_all": 0,
+ "proposed_dmin_worst_all": 2.8014500020058613,
+ "proposed_qp_infeasible_runs": 0,
+ "false_alarms_clean_proposed": 0,
+ "d_safe": 1.5,
+ "detection": {
+  "sensor": {
+   "n": 100,
+   "rate": 1.0,
+   "median_delay": 0.08986530387027347,
+   "p95_delay": 0.0986089811349304
+  },
+  "comm_fdi": {
+   "n": 63,
+   "rate": 1.0,
+   "median_delay": 0.09256740195919022,
+   "p95_delay": 0.16770054007606167
+  },
+  "comm_dos": {
+   "n": 37,
+   "rate": 1.0,
+   "median_delay": 0.17071876889361448,
+   "p95_delay": 0.17860518172404838
+  },
+  "actuator": {
+   "n": 100,
+   "rate": 0.98,
+   "median_delay": 0.45531678737395787,
+   "p95_delay": 0.6620009195939791
+  }
+ },
+ "false_alarm_rate_per_agent_hour": 0.0,
+ "timeseries_seed": 20261057
+}

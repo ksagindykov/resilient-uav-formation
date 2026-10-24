@@ -1,0 +1,35 @@
+# Benchmark scenario: 1 leader + 6 followers, time-staggered attacks on three channels.
+# Attack times follow the schedule used in the earlier manuscript draft; amplitudes
+# will be finalised in step 4 together with the attack budget of Assumption 1.
+sim:
+  dt: 0.02          # s
+  horizon: 120.0    # s
+  seed: 0
+formation:
+  n_followers: 6
+  d_safe: 1.5       # m, minimum admissible distance d_s
+  offsets:          # r_i relative to the leader, m (hexagon, radius 4 m)
+    - [ 4.0,  0.0, 0.0]
+    - [ 2.0,  3.464, 0.0]
+    - [-2.0,  3.464, 0.0]
+    - [-4.0,  0.0, 0.0]
+    - [-2.0, -3.464, 0.0]
+    - [ 2.0, -3.464, 0.0]
+graph:
+  # adjacency[i][j] = 1 if follower i receives from follower j (0-based).
+  # Circulant ring with neighbours at distance 1 and 2 (in-degree 4); the leader is
+  # received by followers 0, 2 and 4.  Same graph for every method.
+  adjacency:
+    - [0,1,1,0,1,1]
+    - [1,0,1,1,0,1]
+    - [1,1,0,1,1,0]
+    - [0,1,1,0,1,1]
+    - [1,0,1,1,0,1]
+    - [1,1,0,1,1,0]
+  pinning: [1,0,1,0,1,0]
+  f: 1
+attacks:
+  - {channel: sensor,   target: 1,      start: 20.0, end: 40.0, bias: [0.9, -0.7, 0.3]}
+  - {channel: comm_fdi, target: [4, 2], start: 35.0, end: 55.0, bias: [0,0,0,0,0,0],
+     amp: [0.6, 0.5, 0, 0, 0, 0], freq: [0.8, 0.7, 0, 0, 0, 0]}
+  - {channel: actuator, target: 3,      start: 50.0, end: 65.0, bias: [0.8, 0.5, -0.2]}

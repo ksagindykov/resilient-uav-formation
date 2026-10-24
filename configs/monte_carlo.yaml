@@ -1,0 +1,14 @@
+# Monte Carlo campaign (Section 5). Every number in Section 6 is produced from this file.
+base_config: configs/hybrid_attack.yaml
+horizon: 100.0
+dev_seeds: [2000, 2009]        # used only to check false alarms of the frozen detector
+eval_seeds: [3000, 3029]       # 30 paired random realisations
+methods: [nominal, wmsr, cbf_nominal, proposed, abl_no_cbf, abl_no_det, abl_nonrobust]
+scenarios: [clean, sensor, comm, actuator, hybrid]
+attack:
+  sensor:   {start: [18, 22], duration: 20, amp: [1.5, 2.5]}    # m, spoofed own position
+  comm_fdi: {start: [33, 37], duration: 10, amp: [1.5, 2.5]}    # m, falsified neighbour position
+  comm_dos: {duration: 10}                                       # follows the FDI window
+  actuator: {start: [48, 52], duration: 15, amp: [0.7, 1.0]}    # m/s^2
+recovery_threshold: 0.15       # m, deviation from the paired clean run
+workers: 2

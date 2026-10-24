@@ -26,7 +26,7 @@ def step(p: np.ndarray, v: np.ndarray, u: np.ndarray, a_u: np.ndarray,
     return p_next, v_next
 
 
-def leader_circle(t: float, radius: float = 20.0, omega: float = 0.08,
+def leader_circle(t: float, radius: float = 40.0, omega: float = 0.04,
                   z0: float = 10.0, z_amp: float = 2.0, z_omega: float = 0.04):
     """Leader reference used in the benchmark: horizontal circle with slow altitude oscillation.
 

@@ -19,9 +19,9 @@ The repository reproduces every number, table and figure of the paper.
 | Trust-weighted formation controller | `src/ruav/controller.py` | done |
 | Robust CBF safety filter | `src/ruav/cbf.py` | done |
 | Analysis constants, Lyapunov certificate (Section 4) | `src/ruav/analysis.py`, `scripts/compute_certificates.py` | done |
-| Baselines A–C | `src/ruav/baselines.py` | step 4 |
-| Monte Carlo campaign | `scripts/run_monte_carlo.py` | step 4 |
-| Figures and tables | `scripts/make_figures.py` | step 4 |
+| Simulation, baselines B1–B3 and ablations | `src/ruav/sim.py` | done |
+| Monte Carlo campaign (1750 runs, raw results in `results/`) | `scripts/run_monte_carlo.py` | done |
+| Figures, tables, headline numbers | `scripts/make_figures.py`, `scripts/design_rule_check.py` | done |
 | PX4 SITL + Gazebo | `docs/SITL.md` | step 5 |
 
 ## Installation
@@ -34,9 +34,10 @@ python -m unittest discover -s tests -v
 ## Reproducing the paper
 ```bash
 python scripts/compute_certificates.py                               # Table of analysis constants (Section 4)
-python scripts/run_scenario.py --config configs/hybrid_attack.yaml   # one run (step 4)
-python scripts/run_monte_carlo.py --config configs/monte_carlo.yaml  # full campaign (step 4)
-python scripts/make_figures.py                                       # tables and figures (step 4)
+python scripts/run_monte_carlo.py --runs 50 --workers 4              # full campaign, ~1 h on 2 cores
+python scripts/run_monte_carlo.py --runs 50 --sensing-radius 6 --out results/mc_results_Rs6.jsonl
+python scripts/make_figures.py                                       # tables, figures, headline.json
+python scripts/design_rule_check.py                                  # sensing-radius design rule
 ```
 All random numbers come from seeds listed in `configs/monte_carlo.yaml`.
 Raw results are written to `results/` and archived with each release on Zenodo.

@@ -28,6 +28,9 @@ class AttackEvent:
             raise ValueError(f"unknown channel {self.channel}")
         if not self.end > self.start:
             raise ValueError("attack interval must have end > start")
+        n = len(self.bias)
+        self.amp = list(self.amp) + [0.0] * (n - len(self.amp))
+        self.freq = list(self.freq) + [0.0] * (n - len(self.freq))
 
     def active(self, t: float) -> bool:
         return self.start <= t < self.end
