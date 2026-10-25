@@ -22,6 +22,8 @@ class AttackEvent:
     bias: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     amp: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     freq: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
+    ramp: list[float] | None = None      # optional linear growth rate of the bias (per second)
+    ramp_max: float = np.inf             # cap on the norm of the ramp part
 
     def __post_init__(self):
         if self.channel not in CHANNEL_TYPES:
@@ -40,7 +42,15 @@ class AttackEvent:
         if not self.active(t):
             return np.zeros(len(self.bias))
         b, a, w = map(np.asarray, (self.bias, self.amp, self.freq))
-        return b + a * np.sin(w * t)
+        out = b + a * np.sin(w * t)
+        if self.ramp is not None:
+            r = np.zeros(len(b)); rr = np.asarray(self.ramp) * (t - self.start)
+            nr = np.linalg.norm(rr)
+            if nr > self.ramp_max:
+                rr = rr * self.ramp_max / nr
+            r[:len(rr)] = rr
+            out = out + r
+        return out
 
 
 @dataclass

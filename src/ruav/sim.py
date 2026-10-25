@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from . import dynamics, cbf as cbfm, detector as detm, estimator as estm, controller as ctlm
+from .quad import QuadFleet, QuadParams
 from .attacks import AttackEvent
 
 LEADER = -1
@@ -54,6 +55,8 @@ class SimConfig:
     det: detm.DetectorParams = field(default_factory=detm.DetectorParams)
     cbf: cbfm.CBFParams = field(default_factory=cbfm.CBFParams)
     # metrics
+    plant: str = "di"           # "di": double integrator (analysis model); "quad": nonlinear quadrotor
+    attack_scale: float = 1.0   # multiplies sensing and false-data amplitudes (sensitivity study)
     eps_rec: float = 0.3        # formation error regarded as recovered, m
     hold_rec: float = 5.0       # time max_i ||e_i|| must stay below eps_rec, s
 
@@ -68,6 +71,21 @@ def default_config(cfg_yaml: dict, mu_pair: float, mu_leader: float) -> SimConfi
                            meas_margin=mu_pair, meas_margin_leader=mu_leader, u_box=4.0,
                            sensing_radius=8.0)
     return c
+
+
+def make_benchmark(n_followers: int, spacing: float = 4.0):
+    """Ring formation of n followers with neighbour spacing `spacing`, circulant graph
+    (two nearest followers on each side), leader received by every second follower."""
+    n = n_followers
+    radius = spacing / (2 * np.sin(np.pi / n))
+    ang = 2 * np.pi * np.arange(n) / n
+    offsets = np.stack([radius * np.cos(ang), radius * np.sin(ang), np.zeros(n)], 1)
+    A = np.zeros((n, n), int)
+    for i in range(n):
+        for k in (1, 2):
+            A[i, (i + k) % n] = A[i, (i - k) % n] = 1
+    g = np.array([1 if i % 2 == 0 else 0 for i in range(n)])
+    return offsets, A, g
 
 
 def leader_state(t):
@@ -100,14 +118,14 @@ def random_attacks(scenario: str, rng, cfg: SimConfig) -> list[AttackEvent]:
     def sensor(t0):
         i = int(rng.integers(n))
         return AttackEvent("sensor", i, t0, t0 + rng.uniform(10, 20),
-                           bias=list(-rng.uniform(2.0, 3.5) * towards_neighbour(i)))
+                           bias=list(-cfg.attack_scale * rng.uniform(2.0, 3.5) * towards_neighbour(i)))
 
     def comm(t0):
         i = int(rng.integers(n))
         srcs = list(np.flatnonzero(cfg.A[i])) + ([LEADER] if cfg.g[i] else [])
         j = int(srcs[int(rng.integers(len(srcs)))])
         if rng.random() < 0.7:
-            b = rng.uniform(2.0, 3.5) * towards_neighbour(i)
+            b = cfg.attack_scale * rng.uniform(2.0, 3.5) * towards_neighbour(i)
             return AttackEvent("comm_fdi", [i, j], t0, t0 + rng.uniform(10, 20), bias=list(b) + [0, 0, 0])
         return AttackEvent("comm_dos", [i, j], t0, t0 + rng.uniform(5, 15))
 
@@ -116,8 +134,30 @@ def random_attacks(scenario: str, rng, cfg: SimConfig) -> list[AttackEvent]:
         return AttackEvent("actuator", i, t0, t0 + rng.uniform(8, 15),
                            bias=list(rng.uniform(0.6, 0.95) * towards_neighbour(i)))
 
+    def stealth_ramp(t0):
+        """Slowly growing own-position spoofing (tries to stay below the link-consistency threshold)."""
+        i = int(rng.integers(n))
+        rate = rng.uniform(0.05, 0.15)
+        return AttackEvent("sensor", i, t0, t0 + 40.0, bias=[0.0, 0.0, 0.0],
+                           ramp=list(-rate * towards_neighbour(i)), ramp_max=3.0)
+
+    def stealth_sub(t0):
+        """Sub-threshold false data on one link plus sub-threshold actuation on another vehicle."""
+        i = int(rng.integers(n))
+        srcs = list(np.flatnonzero(cfg.A[i])) + ([LEADER] if cfg.g[i] else [])
+        j = int(srcs[int(rng.integers(len(srcs)))])
+        e1 = AttackEvent("comm_fdi", [i, j], t0, t0 + 20.0,
+                         bias=list(rng.uniform(0.3, 0.45) * towards_neighbour(i)) + [0, 0, 0])
+        k = int((i + 1 + rng.integers(n - 1)) % n)
+        e2 = AttackEvent("actuator", k, t0, t0 + 20.0, bias=list(rng.uniform(0.25, 0.35) * towards_neighbour(k)))
+        return [e1, e2]
+
     if scenario == "clean":
         return []
+    if scenario == "stealth_ramp":
+        return [stealth_ramp(rng.uniform(15, 25))]
+    if scenario == "stealth_sub":
+        return stealth_sub(rng.uniform(15, 25))
     if scenario == "sensor":
         return [sensor(rng.uniform(15, 30))]
     if scenario == "comm":
@@ -184,6 +224,8 @@ def run(cfg: SimConfig, method: str, scenario: str, seed: int, record: bool = Fa
     nbrs_with_leader = [in_nb[i] + ([LEADER] if cfg.g[i] else []) for i in range(n)]
     dets = [detm.Detector(cfg.det, nbrs_with_leader[i], dt) for i in range(n)]
     trust = [ctlm.TrustWeights(nbrs_with_leader[i], cfg.ctl.tau_up, cfg.ctl.m_levels) for i in range(n)]
+    fleet = QuadFleet(p, v, QuadParams()) if cfg.plant == "quad" else None
+    tilt_max = 0.0
     x_hat = np.hstack([p, v])
     x_bcast = x_hat.copy()
     u_prev = np.zeros((n, 3))
@@ -291,7 +333,11 @@ def run(cfg: SimConfig, method: str, scenario: str, seed: int, record: bool = Fa
         dist = 0.99 * dist + rng.normal(0, 0.01, (n, 3))
         nd = np.linalg.norm(dist, axis=1, keepdims=True)
         dist = dist * np.minimum(1.0, cfg.d_bar / np.maximum(nd, 1e-12))
-        p, v = dynamics.step(p, v, u, a_u, dist, dt)
+        if fleet is None:
+            p, v = dynamics.step(p, v, u, a_u, dist, dt)
+        else:   # the (attacked) acceleration set-point goes to the autopilot of the nonlinear model
+            p, v = fleet.step(u + a_u, dist, dt)
+            tilt_max = max(tilt_max, float(fleet.tilt_deg().max()))
         x_bcast = x_hat.copy()
         u_prev = u.copy()
         # metrics
@@ -307,6 +353,7 @@ def run(cfg: SimConfig, method: str, scenario: str, seed: int, record: bool = Fa
 
     res = _metrics(cfg, events, E_f, E_max, dmin_t, alarm_log, n_infeasible, n_active, steps, n, method, scenario, seed, trace, in_nb)
     res["w_max"] = w_max
+    res["tilt_max_deg"] = tilt_max
     return res
 
 

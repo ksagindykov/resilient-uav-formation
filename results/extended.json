@@ -1,0 +1,589 @@
+{
+ "quad": {
+  "n_runs": 450,
+  "runs_per_cell": 30,
+  "fa_clean_proposed": 0,
+  "viol_proposed": 0,
+  "viol": {
+   "proposed": {
+    "sensor": 0,
+    "hybrid": 0
+   },
+   "abl_no_detect": {
+    "sensor": 0,
+    "hybrid": 0
+   },
+   "B1_consensus": {
+    "sensor": 24,
+    "hybrid": 24
+   },
+   "B2_wmsr": {
+    "sensor": 21,
+    "hybrid": 24
+   },
+   "B3_consensus_cbf": {
+    "sensor": 14,
+    "hybrid": 18
+   }
+  },
+  "dmin_worst": {
+   "proposed": 2.690800849839163,
+   "abl_no_detect": 2.385977491918285,
+   "B1_consensus": 0.02376708473169419,
+   "B2_wmsr": 0.3011286682256257,
+   "B3_consensus_cbf": 1.2870749223638862
+  },
+  "peak": {
+   "proposed": {
+    "clean": 0.3464695905077623,
+    "sensor": 0.3336821671501943,
+    "hybrid": 0.4329127531254311
+   },
+   "abl_no_detect": {
+    "clean": 0.3464695905077623,
+    "sensor": 5.853008689675448,
+    "hybrid": 5.04306172127251
+   },
+   "B1_consensus": {
+    "clean": 0.3464611771030277,
+    "sensor": 2.918021283650924,
+    "hybrid": 3.074586003850805
+   },
+   "B2_wmsr": {
+    "clean": 0.40300690952791546,
+    "sensor": 2.9134681021184607,
+    "hybrid": 2.8124613200469724
+   },
+   "B3_consensus_cbf": {
+    "clean": 0.3464611770263081,
+    "sensor": 3.67392070167445,
+    "hybrid": 3.6945413524523545
+   }
+  },
+  "tilt_max": 28.064790016072564,
+  "tilt_max_proposed": 17.997195574575393,
+  "infeasible": 0,
+  "detection": {
+   "actuator": {
+    "n": 30,
+    "rate": 0.9666666666666667,
+    "median_delay": 0.5415353095461768
+   },
+   "comm_dos": {
+    "n": 8,
+    "rate": 1.0,
+    "median_delay": 0.17200767860925126
+   },
+   "comm_fdi": {
+    "n": 22,
+    "rate": 1.0,
+    "median_delay": 0.09434315188713605
+   },
+   "sensor": {
+    "n": 60,
+    "rate": 1.0,
+    "median_delay": 0.08926655167379138
+   }
+  }
+ },
+ "stealth": {
+  "runs_per_cell": 30,
+  "viol": {
+   "proposed": {
+    "stealth_ramp": 0,
+    "stealth_sub": 0
+   },
+   "abl_no_detect": {
+    "stealth_ramp": 0,
+    "stealth_sub": 0
+   },
+   "B1_consensus": {
+    "stealth_ramp": 28,
+    "stealth_sub": 0
+   },
+   "B2_wmsr": {
+    "stealth_ramp": 28,
+    "stealth_sub": 0
+   },
+   "B3_consensus_cbf": {
+    "stealth_ramp": 26,
+    "stealth_sub": 0
+   }
+  },
+  "peak": {
+   "proposed": {
+    "stealth_ramp": 0.3726533659888954,
+    "stealth_sub": 0.2982078660921852
+   },
+   "abl_no_detect": {
+    "stealth_ramp": 7.022620367784493,
+    "stealth_sub": 0.2947306252624174
+   },
+   "B1_consensus": {
+    "stealth_ramp": 2.983881841099787,
+    "stealth_sub": 0.29473059615442543
+   },
+   "B2_wmsr": {
+    "stealth_ramp": 2.985909467902815,
+    "stealth_sub": 0.24413171002565795
+   },
+   "B3_consensus_cbf": {
+    "stealth_ramp": 3.6122886423144234,
+    "stealth_sub": 0.2947305988576818
+   }
+  },
+  "det_ramp": {
+   "sensor": {
+    "n": 30,
+    "rate": 1.0,
+    "median_delay": 4.705274070199174
+   }
+  },
+  "det_sub": {
+   "actuator": {
+    "n": 30,
+    "rate": 0.8333333333333334,
+    "median_delay": 9.575909687771123
+   },
+   "comm_fdi": {
+    "n": 30,
+    "rate": 0.26666666666666666,
+    "median_delay": 3.376057718446418
+   }
+  }
+ },
+ "scale": {
+  "runs_per_cell": 30,
+  "viol": {
+   "proposed": {
+    "6": 0,
+    "10": 0,
+    "20": 0
+   },
+   "B1_consensus": {
+    "6": 37,
+    "10": 24,
+    "20": 23
+   },
+   "B2_wmsr": {
+    "6": 38,
+    "10": 24,
+    "20": 23
+   },
+   "B3_consensus_cbf": {
+    "6": 31,
+    "10": 18,
+    "20": 18
+   }
+  },
+  "peak": {
+   "proposed": {
+    "6": 0.28099972103183485,
+    "10": 0.20404407109886344,
+    "20": 0.20741410690277576
+   },
+   "B1_consensus": {
+    "6": 3.071957285208994,
+    "10": 3.0145602732559897,
+    "20": 2.9519793117439113
+   },
+   "B2_wmsr": {
+    "6": 2.8365561720876933,
+    "10": 2.8767037323023263,
+    "20": 2.8906343143930346
+   },
+   "B3_consensus_cbf": {
+    "6": 3.731351942308823,
+    "10": 3.168413102556939,
+    "20": 3.111823318044404
+   }
+  },
+  "fa": {
+   "6": 0,
+   "10": 0,
+   "20": 0
+  }
+ },
+ "sens": {
+  "thresholds": {
+   "0.3/0.3": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.29854267097708104,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.33205947245512846
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.3/0.4": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.2991468522186841,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.3/0.6": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.3069880324383901,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.723861215011457
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.5/0.3": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.29854267097708104,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.33205947245512846
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.5/0.4": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.2991468522186841,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.5/0.6": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.3069880324383901,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.723861215011457
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.8/0.3": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.29854267097708104,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.33205947245512846
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.8/0.4": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.2991468522186841,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "0.8/0.6": {
+    "fa_clean": 0,
+    "peak_hybrid": 0.3069880324383901,
+    "viol_hybrid": 0,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.723861215011457
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   }
+  },
+  "amplitude": {
+   "B1_consensus/0.25": {
+    "peak": 0.8106036793573277,
+    "viol": 0,
+    "n": 30,
+    "det": null
+   },
+   "B1_consensus/0.5": {
+    "peak": 1.564316229012346,
+    "viol": 0,
+    "n": 30,
+    "det": null
+   },
+   "B1_consensus/1.0": {
+    "peak": 3.0787103103155875,
+    "viol": 23,
+    "n": 30,
+    "det": null
+   },
+   "B1_consensus/1.5": {
+    "peak": 4.598262579262761,
+    "viol": 30,
+    "n": 30,
+    "det": null
+   },
+   "proposed/0.25": {
+    "peak": 0.23926845263648822,
+    "viol": 0,
+    "n": 30,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.0947731572728241
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "proposed/0.5": {
+    "peak": 0.248745845862246,
+    "viol": 0,
+    "n": 30,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "proposed/1.0": {
+    "peak": 0.2991468522186841,
+    "viol": 0,
+    "n": 30,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   },
+   "proposed/1.5": {
+    "peak": 0.34935833714673703,
+    "viol": 0,
+    "n": 30,
+    "det": {
+     "actuator": {
+      "n": 30,
+      "rate": 0.9666666666666667,
+      "median_delay": 0.4267056937636333
+     },
+     "comm_dos": {
+      "n": 8,
+      "rate": 1.0,
+      "median_delay": 0.17200767860925126
+     },
+     "comm_fdi": {
+      "n": 22,
+      "rate": 1.0,
+      "median_delay": 0.09434315188713605
+     },
+     "sensor": {
+      "n": 30,
+      "rate": 1.0,
+      "median_delay": 0.08662603561404936
+     }
+    }
+   }
+  },
+  "runs_per_cell": 30
+ }
+}

@@ -18,6 +18,9 @@ class DetectorParams:
     n_on: int = 5             # samples to raise an alarm
     n_off: int = 50           # samples to clear an alarm
     dos_samples: int = 5      # missing samples before a link is declared unavailable
+    tau_inner: float = 0.0    # time constant of the closed inner (attitude/thrust) loop used in the
+                              # actuation residual; 0 for the double-integrator model
+    arm_time: float = 0.0     # alarms are suppressed until the formation has been acquired, s
 
 
 class Persistence:
@@ -54,10 +57,14 @@ class Detector:
         self.missing = {j: 0 for j in neighbours}
         self.a_u_hat = np.zeros(3)
         self.v_prev = None
+        self.u_lag = np.zeros(3)      # command filtered by the nominal inner-loop model
+        self.t = 0.0
 
     def update(self, y: np.ndarray, u_prev: np.ndarray, msgs: dict, rel: dict) -> DetectorOutput:
         """y = [p; v] own measurement (6,); msgs = {j: z_ij (6,) or None}; rel = {j: (rho, varrho)}."""
         prm = self.prm
+        self.t += self.dt
+        armed = self.t >= prm.arm_time
         # (a) link consistency: received position vs own position + relative measurement
         r_c, received = {}, []
         for j, z in msgs.items():
@@ -70,21 +77,26 @@ class Detector:
                 received.append(j)
         bad = [j for j in received if r_c[j] > prm.theta_c]
         # (b) own-sensor test by majority: if most received links disagree, suspect y_i itself
-        own_raw = len(received) >= 2 and len(bad) > len(received) / 2
+        own_raw = armed and len(received) >= 2 and len(bad) > len(received) / 2
         sensor_alarm = self.sensor.update(own_raw)
         link_alarm = {}
         for j, pers in self.links.items():
-            fdi_raw = (j in bad) and not own_raw
-            dos_raw = self.missing[j] >= prm.dos_samples
+            fdi_raw = armed and (j in bad) and not own_raw
+            dos_raw = armed and self.missing[j] >= prm.dos_samples
             link_alarm[j] = pers.update(fdi_raw or dos_raw)
         # (c) actuation residual: filtered unknown-input estimate a = dv/dt - u
         v = y[3:]
+        if prm.tau_inner > 0:
+            self.u_lag = self.u_lag + self.dt / (prm.tau_inner + self.dt) * (u_prev - self.u_lag)
+            u_ref = self.u_lag
+        else:
+            u_ref = u_prev
         if self.v_prev is not None and not sensor_alarm:
-            raw_a = (v - self.v_prev) / self.dt - u_prev
+            raw_a = (v - self.v_prev) / self.dt - u_ref
             beta = self.dt / (prm.tau_f + self.dt)
             self.a_u_hat = (1 - beta) * self.a_u_hat + beta * raw_a
         self.v_prev = v.copy()
-        act_raw = (not sensor_alarm) and float(np.linalg.norm(self.a_u_hat)) > prm.theta_u
+        act_raw = armed and (not sensor_alarm) and float(np.linalg.norm(self.a_u_hat)) > prm.theta_u
         actuator_alarm = self.actuator.update(act_raw)
         return DetectorOutput(sensor_alarm, actuator_alarm, link_alarm, self.a_u_hat.copy(),
                               {"link": r_c, "actuation": float(np.linalg.norm(self.a_u_hat))})

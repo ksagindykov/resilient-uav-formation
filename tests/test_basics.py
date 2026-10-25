@@ -58,5 +58,20 @@ class TestAttacks(unittest.TestCase):
         self.assertEqual(len(s.active_events(37.0)), 2)   # sensor + comm overlap
 
 
+class TestQuad(unittest.TestCase):
+    def test_hover_and_step(self):
+        import numpy as np
+        from ruav.quad import QuadFleet
+        f = QuadFleet(np.zeros((2, 3)), np.zeros((2, 3)))
+        for _ in range(100):
+            p, v = f.step(np.zeros((2, 3)), np.zeros((2, 3)), 0.02)
+        self.assertLess(np.abs(p).max(), 1e-6)                      # hover is an equilibrium
+        a = np.array([[1.0, 0, 0], [0, -1.0, 0]])
+        for _ in range(150):
+            p, v = f.step(a, np.zeros((2, 3)), 0.02)
+        self.assertLess(np.abs(v[:, :2] - a[:, :2] * 3.0).max(), 0.3)   # tracks the commanded acceleration
+        self.assertLess(f.tilt_deg().max(), 35.0 + 1e-6)
+
+
 if __name__ == "__main__":
     unittest.main()
