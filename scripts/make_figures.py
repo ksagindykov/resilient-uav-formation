@@ -154,7 +154,7 @@ def main():
         col = ("Method", "$E_{\\max}$, m", "$d_{\\min}$, m", "Viol.", "$T_{\\mathrm{rec}}$, s", "$p$") if lang == "en" else \
               ("Метод", "$E_{\\max}$, м", "$d_{\\min}$, м", "Наруш.", "$T_{\\mathrm{rec}}$, с", "$p$")
         L = [r"\begin{table}[t]", r"\centering", r"\caption{" + cap + r"}\label{tab:hybrid}", r"\footnotesize",
-             r"\resizebox{\linewidth}{!}{%", r"\begin{tabular}{lccccc}", r"\toprule", " & ".join(col) + r" \\", r"\midrule"]
+             r"\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%", r"\begin{tabular}{lccccc}", r"\toprule", " & ".join(col) + r" \\", r"\midrule"]
         for m in METHODS:
             r = S[(m, "hybrid")]
             p = "---" if m == "proposed" else (f"{tests[(m, 'hybrid')]:.1e}" if tests[(m, 'hybrid')] < 1e-3 else f"{tests[(m, 'hybrid')]:.3f}")
@@ -171,7 +171,7 @@ def main():
         cap = ("Peak worst-follower formation error $E_{\\max}$ (m), mean [95\\% CI], and number of runs with $d_{\\min}<d_s$ (in parentheses) per scenario."
                if lang == "en" else "Пиковая ошибка худшего ведомого $E_{\\max}$ (м), среднее [95\\% ДИ], и число прогонов с $d_{\\min}<d_s$ (в скобках) по сценариям.")
         L = [r"\begin{table}[t]", r"\centering", r"\caption{" + cap + r"}\label{tab:scenarios}", r"\scriptsize",
-             r"\resizebox{\linewidth}{!}{%", r"\begin{tabular}{l" + "c" * len(SCEN) + "}", r"\toprule",
+             r"\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{%", r"\begin{tabular}{l" + "c" * len(SCEN) + "}", r"\toprule",
              ("Method" if lang == "en" else "Метод") + " & " + " & ".join(sc[s] for s in SCEN) + r" \\", r"\midrule"]
         for m in METHODS:
             cells = [f"{S[(m, s)]['peak_Emax'][0]:.2f} [{S[(m, s)]['peak_Emax'][1]:.2f}, {S[(m, s)]['peak_Emax'][2]:.2f}] ({S[(m, s)]['collisions']})" for s in SCEN]

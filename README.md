@@ -4,7 +4,7 @@ Code accompanying the manuscript
 
 > **Resilient Distributed Formation Control of Multi-UAV Systems under Sensor,
 > Communication and Actuator Cyberattacks with Collision Avoidance Guarantees**
-> K. Sagindykov, N. Mukusheva — submitted to *Drones* (MDPI), 2027.
+> K. Sagindykov, Z. Akhmetova, N. Mukusheva, A. Sexenbayeva, K. Sadvakassova — submitted to *Drones* (MDPI).
 
 The repository reproduces every number, table and figure of the paper.
 
