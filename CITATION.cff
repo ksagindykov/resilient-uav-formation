@@ -1,16 +1,16 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "resilient-uav-formation: code for resilient distributed formation control of multi-UAV systems under cyberattacks"
-version: 0.1.0
-date-released: 2026-10-08
+version: 1.0.0
+date-released: 2026-10-30
 license: MIT
 authors:
   - family-names: Sagindykov
     given-names: Kakim
     affiliation: "L.N. Gumilyov Eurasian National University"
-    # orcid: "https://orcid.org/0000-0003-3315-798X"
+    orcid: "https://orcid.org/0000-0003-3315-798X"
   - family-names: Mukusheva
     given-names: Nazym
     affiliation: "L.N. Gumilyov Eurasian National University"
-    # orcid: "https://orcid.org/0000-0000-0000-0000"
-repository-code: "https://github.com/OWNER/resilient-uav-formation"
+    orcid: "https://orcid.org/0009-0001-5015-3617"
+repository-code: "https://github.com/ksagindykov/resilient-uav-formation"
