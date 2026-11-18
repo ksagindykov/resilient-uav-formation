@@ -3,6 +3,7 @@
 
   quad      nonlinear quadrotor plant (attitude loop, thrust/tilt limits, motor lag)
   stealth   slowly growing spoofing and sub-threshold false data + actuation
+  slowramp  slower spoofing ramps (0.005-0.02 m/s over 75 s), added in revision
   scale     formations of 10 and 20 followers (time-staggered attacks)
   sens      detector thresholds theta_c x theta_u, and attack amplitude scale
 
@@ -54,6 +55,10 @@ def jobs_for(study, runs):
         for s in ("stealth_ramp", "stealth_sub"):
             for m in ("proposed", "abl_no_detect", "B1_consensus", "B2_wmsr", "B3_consensus_cbf"):
                 J += [dict(study=study, method=m, scenario=s, seed=k) for k in seeds]
+    elif study == "slowramp":                 # slower spoofing ramps (reviewer request), 75 s windows
+        for rate in (0.005, 0.01, 0.02):
+            for m in ("proposed", "abl_no_detect", "B1_consensus", "B2_wmsr", "B3_consensus_cbf"):
+                J += [dict(study=study, method=m, scenario="stealth_ramp", seed=k, ramp_rate=rate) for k in seeds]
     elif study == "scale":
         for n in (10, 20):
             for m in ("proposed", "B1_consensus", "B2_wmsr", "B3_consensus_cbf"):
@@ -73,6 +78,8 @@ def _job(j):
     n = j.get("n")
     cfg = base_cfg(n, SCALE_RS.get(n), j.get("plant", "di"))
     cfg.attack_scale = j.get("attack_scale", 1.0)
+    if "ramp_rate" in j:
+        cfg.ramp_rate, cfg.ramp_duration = j["ramp_rate"], 75.0
     if "theta_c" in j:
         cfg.det = copy.replace(cfg.det, theta_c=j["theta_c"], theta_u=j["theta_u"])
     r = sim.run(cfg, j["method"], j["scenario"], j["seed"])
@@ -83,12 +90,12 @@ def _job(j):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--study", required=True, choices=["quad", "stealth", "scale", "sens"])
+    ap.add_argument("--study", required=True, choices=["quad", "stealth", "slowramp", "scale", "sens"])
     ap.add_argument("--runs", type=int, default=30)
     ap.add_argument("--workers", type=int, default=os.cpu_count() or 1)
     a = ap.parse_args()
     out = os.path.join(ROOT, "results", f"ext_{a.study}.jsonl")
-    key = lambda d: json.dumps({k: d[k] for k in sorted(d) if k in ("method", "scenario", "seed", "plant", "n", "theta_c", "theta_u", "attack_scale")}, sort_keys=True)
+    key = lambda d: json.dumps({k: d[k] for k in sorted(d) if k in ("method", "scenario", "seed", "plant", "n", "theta_c", "theta_u", "attack_scale", "ramp_rate")}, sort_keys=True)
     done = set()
     if os.path.exists(out):
         done = {key(json.loads(l)) for l in open(out)}

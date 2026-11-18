@@ -57,6 +57,8 @@ class SimConfig:
     # metrics
     plant: str = "di"           # "di": double integrator (analysis model); "quad": nonlinear quadrotor
     attack_scale: float = 1.0   # multiplies sensing and false-data amplitudes (sensitivity study)
+    ramp_rate: float | None = None   # fixed growth rate of the stealthy spoofing, m/s (None: drawn in [0.05, 0.15])
+    ramp_duration: float = 40.0      # duration of the stealthy spoofing, s
     eps_rec: float = 0.3        # formation error regarded as recovered, m
     hold_rec: float = 5.0       # time max_i ||e_i|| must stay below eps_rec, s
 
@@ -138,7 +140,9 @@ def random_attacks(scenario: str, rng, cfg: SimConfig) -> list[AttackEvent]:
         """Slowly growing own-position spoofing (tries to stay below the link-consistency threshold)."""
         i = int(rng.integers(n))
         rate = rng.uniform(0.05, 0.15)
-        return AttackEvent("sensor", i, t0, t0 + 40.0, bias=[0.0, 0.0, 0.0],
+        if cfg.ramp_rate is not None:          # slow-ramp study: same draws, fixed rate
+            rate = cfg.ramp_rate
+        return AttackEvent("sensor", i, t0, t0 + cfg.ramp_duration, bias=[0.0, 0.0, 0.0],
                            ramp=list(-rate * towards_neighbour(i)), ramp_max=3.0)
 
     def stealth_sub(t0):

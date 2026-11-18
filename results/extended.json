@@ -152,6 +152,102 @@
    }
   }
  },
+ "slowramp": {
+  "runs_per_cell": 30,
+  "window": 75.0,
+  "theta_c": 0.5,
+  "viol_all": 0,
+  "fa_proposed": 0,
+  "rates": {
+   "0.005": {
+    "det": {
+     "n": 30,
+     "rate": 0.0,
+     "median_delay": null
+    },
+    "predicted_delay": 100.0,
+    "peak": {
+     "proposed": 0.39659385541084585,
+     "abl_no_detect": 0.39653532473894687,
+     "B1_consensus": 0.396535324738947,
+     "B2_wmsr": 0.403234163430691,
+     "B3_consensus_cbf": 0.396535324738947
+    },
+    "viol": {
+     "proposed": 0,
+     "abl_no_detect": 0,
+     "B1_consensus": 0,
+     "B2_wmsr": 0,
+     "B3_consensus_cbf": 0
+    },
+    "dmin": {
+     "proposed": 3.1443476698542616,
+     "abl_no_detect": 3.1443476698542616,
+     "B1_consensus": 3.1445237020872305,
+     "B2_wmsr": 3.144035746646437,
+     "B3_consensus_cbf": 3.1445237020872305
+    }
+   },
+   "0.01": {
+    "det": {
+     "n": 30,
+     "rate": 1.0,
+     "median_delay": 48.32370996835466
+    },
+    "predicted_delay": 50.0,
+    "peak": {
+     "proposed": 0.4994338055263906,
+     "abl_no_detect": 0.7329633480456277,
+     "B1_consensus": 0.7329584518716459,
+     "B2_wmsr": 0.7338744571128064,
+     "B3_consensus_cbf": 0.7329584518716459
+    },
+    "viol": {
+     "proposed": 0,
+     "abl_no_detect": 0,
+     "B1_consensus": 0,
+     "B2_wmsr": 0,
+     "B3_consensus_cbf": 0
+    },
+    "dmin": {
+     "proposed": 3.1443476698542616,
+     "abl_no_detect": 3.1443476698542616,
+     "B1_consensus": 3.1445237020872305,
+     "B2_wmsr": 3.144035746646437,
+     "B3_consensus_cbf": 3.1445237020872305
+    }
+   },
+   "0.02": {
+    "det": {
+     "n": 30,
+     "rate": 1.0,
+     "median_delay": 24.931056652877743
+    },
+    "predicted_delay": 25.0,
+    "peak": {
+     "proposed": 0.46870412017744195,
+     "abl_no_detect": 1.4551876683168137,
+     "B1_consensus": 1.4557104476526181,
+     "B2_wmsr": 1.4499002075433258,
+     "B3_consensus_cbf": 1.4557148397948654
+    },
+    "viol": {
+     "proposed": 0,
+     "abl_no_detect": 0,
+     "B1_consensus": 0,
+     "B2_wmsr": 0,
+     "B3_consensus_cbf": 0
+    },
+    "dmin": {
+     "proposed": 3.1443476698542616,
+     "abl_no_detect": 2.8199281384156905,
+     "B1_consensus": 2.45085479034664,
+     "B2_wmsr": 2.4496971139714523,
+     "B3_consensus_cbf": 2.4507887399038193
+    }
+   }
+  }
+ },
  "scale": {
   "runs_per_cell": 30,
   "viol": {

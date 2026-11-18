@@ -24,6 +24,7 @@ The repository reproduces every number, table and figure of the paper.
 | Figures, tables, headline numbers | `scripts/make_figures.py`, `scripts/design_rule_check.py` | done |
 | Nonlinear quadrotor plant (attitude on SO(3), thrust/tilt limits, motor lag) | `src/ruav/quad.py` | done |
 | Extended studies: quadrotor, stealthy attacks, 10/20 followers, sensitivity (1770 runs) | `scripts/run_extended.py`, `scripts/make_extended.py` | done |
+| Revision (v1.0.1): slower spoofing ramps 0.005-0.02 m/s (450 runs), attack-free residual levels for threshold selection | `scripts/run_extended.py --study slowramp`, `scripts/residual_levels.py` | done |
 | PX4 SITL / flight tests | — | future work |
 
 ## Installation
@@ -43,7 +44,8 @@ python scripts/design_rule_check.py                                  # sensing-r
 python scripts/compute_certificates.py --n 10 --rs 9  --tag N10       # certificates for the scalability study
 python scripts/compute_certificates.py --n 20 --rs 14 --tag N20
 python scripts/compute_certificates.py --kp 1 --kv 2 --tag quad      # certificate for the quadrotor gains
-for s in quad stealth scale sens; do python scripts/run_extended.py --study $s --runs 30 --workers 4; done   # ~2 h on 2 cores
+for s in quad stealth slowramp scale sens; do python scripts/run_extended.py --study $s --runs 30 --workers 4; done   # ~2.5 h on 2 cores
+python scripts/residual_levels.py --runs 50                            # attack-free residual levels -> results/residual_levels.json
 python scripts/make_extended.py                                      # extended tables, results/extended.json
 ```
 All random numbers come from fixed seeds (`SEED0` in `scripts/run_monte_carlo.py`); every method sees the same attacks, noise and initial conditions for a given seed.

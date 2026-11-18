@@ -107,6 +107,41 @@ def main():
                    if lang == "en" else
                    f"Скрытные атаки: пиковая ошибка худшего ведомого $E_{{\\max}}$ (м), среднее [95\\% ДИ] по {n} прогонам, и число прогонов с $d_{{\\min}}<d_s$ (в скобках).")
             open(os.path.join(TEX, f"ext_stealth_{lang}.tex"), "w").write(table(cap, "tab:stealth", hdr, rows))
+    # ---------------- slower spoofing ramps (added in revision)
+    sr = load("slowramp")
+    if sr:
+        by = defaultdict(list)
+        for r in sr:
+            by[(r["method"], r["ramp_rate"])].append(r)
+        rates = sorted({k[1] for k in by})
+        import sys; sys.path.insert(0, os.path.join(ROOT, "src"))
+        from ruav.detector import DetectorParams
+        theta_c = DetectorParams().theta_c
+        X["slowramp"] = {"runs_per_cell": len(by[("proposed", rates[0])]), "window": 75.0, "theta_c": theta_c,
+                         "viol_all": int(sum(r["collision"] for r in sr)),
+                         "fa_proposed": int(sum(r["false_alarms"] for r in sr if r["method"] == "proposed")),
+                         "rates": {str(v): {"det": det_stats(by[("proposed", v)]).get("sensor", {}),
+                                            "predicted_delay": theta_c / v,
+                                            "peak": {m: float(np.mean([r["peak_Emax"] for r in by[(m, v)]])) for m in M5},
+                                            "viol": {m: int(sum(r["collision"] for r in by[(m, v)])) for m in M5},
+                                            "dmin": {m: float(min(r["d_min"] for r in by[(m, v)])) for m in M5}} for v in rates}}
+        for lang in ("en", "ru"):
+            en = lang == "en"
+            hdr = (["Ramp rate, m/s", "Detected", "Median delay, s", r"$\theta_c/\text{rate}$, s", "Proposed", "CBF only", r"Consensus~\cite{ren2008distributed}"] if en else
+                   ["Скорость, м/с", "Обнаружено", "Медиана задержки, с", r"$\theta_c/\text{скорость}$, с", "Предложенный", "Только CBF", r"Консенсус~\cite{ren2008distributed}"])
+            rows = []
+            for v in rates:
+                d = X["slowramp"]["rates"][str(v)]["det"]
+                nd = int(round(d.get("rate", 0) * d.get("n", 0)))
+                md = d.get("median_delay")
+                c1, v1, _ = cell(by[("proposed", v)]); c2, v2, _ = cell(by[("abl_no_detect", v)]); c3, v3, _ = cell(by[("B1_consensus", v)])
+                rows.append([f"{v:g}", f"{nd}/{d.get('n', 0)}", "--" if md is None else f"{md:.1f}", f"{theta_c / v:.0f}",
+                             f"{c1} ({v1})", f"{c2} ({v2})", f"{c3} ({v3})"])
+            n = X["slowramp"]["runs_per_cell"]
+            cap = (f"Slower spoofing ramps (attack window 75~s, {n} runs per rate): detection of the own-sensor attack by the proposed controller, median detection delay compared with $\\theta_c$ divided by the ramp rate, and peak worst-follower error $E_{{\\max}}$ (m), mean [95\\% CI], with runs with $d_{{\\min}}<d_s$ in parentheses."
+                   if en else
+                   f"Более медленная подмена (окно атаки 75~с, {n} прогонов на скорость): обнаружение атаки на собственный датчик предложенным регулятором, медианная задержка обнаружения в сравнении с отношением $\\theta_c$ к скорости нарастания и пиковая ошибка худшего ведомого $E_{{\\max}}$ (м), среднее [95\\% ДИ], в скобках --- прогоны с $d_{{\\min}}<d_s$.")
+            open(os.path.join(TEX, f"ext_slowramp_{lang}.tex"), "w").write(table(cap, "tab:slowramp", hdr, rows))
     # ---------------- scalability
     sc = load("scale")
     main_rows = [json.loads(l) for l in open(os.path.join(RES, "mc_results.jsonl"))]
